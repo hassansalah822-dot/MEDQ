@@ -2,70 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEDQ | Premium Medical Question Bank</title>
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2563EB">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/variables.css">
-    
-    <style>
-        body {
-            background-color: var(--bg-light);
-            color: #1e293b;
-            font-family: 'Inter', system-ui, sans-serif;
-        }
-        .hero-section {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            background: radial-gradient(circle at top right, rgba(37, 99, 235, 0.1), transparent 40%);
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-        }
-    </style>
+    <meta http-equiv="refresh" content="0; url=login.html">
+    <script>window.location.replace("login.html");</script>
+    <title>Loading...</title>
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg glass-card fixed-top m-3 px-4 py-2">
-        <a class="navbar-brand fw-bold text-primary" href="#"><i class="fa-solid fa-staff-snake me-2"></i>MEDQ</a>
-        <div class="ms-auto">
-            <a href="login.html" class="btn btn-outline-primary rounded-pill px-4 me-2">Login</a>
-            <a href="register.html" class="btn btn-primary rounded-pill px-4 shadow-sm">Get Started</a>
-        </div>
-    </nav>
-
-    <section class="hero-section container">
-        <div class="row align-items-center w-100 mt-5">
-            <div class="col-lg-6">
-                <span class="badge bg-primary bg-opacity-10 text-primary mb-3 py-2 px-3 rounded-pill">
-                    <i class="fa-solid fa-star me-1"></i> Elite Medical Learning
-                </span>
-                <h1 class="display-4 fw-bold mb-4">Master Medicine with Confidence.</h1>
-                <p class="lead text-muted mb-5">Access thousands of high-yield clinical scenarios, complete with deep analytics and tailored study paths.</p>
-                <div class="d-flex flex-wrap gap-3">
-                    <a href="register.html" class="btn btn-primary btn-lg rounded-pill px-5 shadow">Start Free Trial</a>
-                    <a href="https://wa.me/+249901879983" target="_blank" class="btn btn-lg rounded-pill px-4 shadow" style="background-color: #10B981; color: white; border: none;">
-                        <i class="fa-brands fa-whatsapp me-2"></i> Subscribe via WhatsApp
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then(registration => console.log('ServiceWorker registration successful with scope: ', registration.scope))
-            .catch(err => console.log('ServiceWorker registration failed: ', err));
-        });
-      }
-    </script>
-</body>
+<body style="background-color: #F8FAFC;"></body>
 </html>
