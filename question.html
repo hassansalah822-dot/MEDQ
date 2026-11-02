@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>MEDQ | Clinical Session</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2563EB">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Manrope', 'sans-serif'] },
+                    colors: { primary: '#2563EB', secondary: '#4F46E5', accent: '#10B981', error: '#EF4444', background: '#F8FAFC', textMain: '#0F172A', textMuted: '#64748B', borderLight: '#E2E8F0' }
+                }
+            }
+        }
+    </script>
+
+    <style type="text/tailwindcss">
+        body { background-color: #F8FAFC; color: #0F172A; transition: background-color 0.3s, color 0.3s; font-family: 'Manrope', sans-serif; overflow-x: hidden; }
+        .glass-nav { @apply bg-white/90 backdrop-blur-md border-b border-borderLight shadow-sm; }
+
+        .question-card {
+            max-width: 900px; width: 100%; margin: 0 auto; background: #ffffff;
+            border-radius: clamp(16px, 4vw, 24px); padding: clamp(16px, 4vw, 36px);
+            box-shadow: 0 12px 40px -12px rgba(0,0,0,0.1); box-sizing: border-box;
+        }
+
+        .scenario-text {
+            font-size: clamp(17px, 4vw, 21px); line-height: 1.85; text-align: justify; hyphens: auto; word-wrap: break-word; letter-spacing: 0.3px;
+            background-color: #F8FAFC; border-left: clamp(4px, 1vw, 6px) solid #2563EB;
+            padding: clamp(16px, 4vw, 28px) clamp(20px, 5vw, 32px);
+            border-radius: 0 clamp(12px, 3vw, 18px) clamp(12px, 3vw, 18px) 0;
+            margin-bottom: clamp(24px, 6vw, 36px); color: #1E293B; font-weight: 500;
+        }
+
+        .scenario-text strong, .scenario-text b {
+            color: #0F172A; font-weight: 800; background-color: rgba(37, 99, 235, 0.08); padding: 2px 6px; border-radius: 6px; white-space: normal; word-wrap: break-word;
+        }
+
+        .option-item { @apply flex items-center p-3 sm:p-5 mb-3 sm:mb-4 border-2 border-slate-200 rounded-xl sm:rounded-2xl cursor-pointer bg-white transition-all duration-300 shadow-sm hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5; }
+        .option-item.selected { @apply border-primary bg-blue-50 ring-4 ring-primary/10; }
+        .option-item.correct { @apply border-accent bg-emerald-50 ring-4 ring-accent/10 shadow-emerald-100; }
+        .option-item.incorrect { @apply border-error bg-red-50 ring-4 ring-error/10 opacity-80 grayscale-[20%]; }
+        
+        .option-letter { @apply flex justify-center items-center shrink-0 w-10 h-10 sm:w-12 sm:h-12 mr-3 sm:mr-5 text-base sm:text-lg font-black rounded-lg sm:rounded-xl bg-slate-100 text-slate-400 transition-all duration-300 shadow-inner; }
+        .option-item.selected .option-letter { @apply bg-primary text-white shadow-md; }
+        .option-item.correct .option-letter { @apply bg-accent text-white shadow-md; }
+        .option-item.incorrect .option-letter { @apply bg-error text-white shadow-md; }
+        
+        .option-text { font-size: clamp(14px, 3.5vw, 18px); line-height: 1.6; font-weight: 600; color: #1E293B; width: 100%; word-wrap: break-word; }
+        
+        .explanation-text { font-size: clamp(14px, 3.5vw, 17px); line-height: 1.8; text-align: justify; hyphens: auto; color: #334155; font-weight: 500; word-wrap: break-word; }
+
+        body.dark-mode { background-color: #0F172A; color: #F8FAFC; }
+        .dark-mode .glass-nav { background-color: rgba(15, 23, 42, 0.85) !important; border-bottom: 1px solid #334155 !important; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .dark-mode .border-borderLight { border-color: #334155 !important; }
+        
+        .dark-mode .question-card { background: #1E293B; box-shadow: 0 12px 40px -12px rgba(0,0,0,0.5); border: 1px solid #334155; }
+        .dark-mode .scenario-text { background-color: rgba(15, 23, 42, 0.6); border-left-color: #3B82F6; color: #F1F5F9; }
+        .dark-mode .scenario-text strong { color: #FFFFFF; background-color: rgba(59, 130, 246, 0.2); }
+        
+        .dark-mode .option-item { background: linear-gradient(145deg, #1E293B, #0F172A); border-color: #334155; box-shadow: 0 4px 15px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05); }
+        .dark-mode .option-item:hover { border-color: #3B82F6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.3), inset 0 1px 0 rgba(255,255,255,0.1); }
+        .dark-mode .option-item.selected { background: linear-gradient(145deg, rgba(37, 99, 235, 0.15), #1E293B); border-color: #60A5FA; box-shadow: 0 0 20px rgba(59, 130, 246, 0.5), inset 0 0 10px rgba(59, 130, 246, 0.2); }
+        .dark-mode .option-item.correct { background: linear-gradient(145deg, rgba(16, 185, 129, 0.15), #1E293B); border-color: #34D399; box-shadow: 0 0 25px rgba(16, 185, 129, 0.5), inset 0 0 15px rgba(16, 185, 129, 0.2); }
+        .dark-mode .option-item.incorrect { background: linear-gradient(145deg, rgba(239, 68, 68, 0.15), #1E293B); border-color: #F87171; box-shadow: 0 0 25px rgba(239, 68, 68, 0.5), inset 0 0 15px rgba(239, 68, 68, 0.2); opacity: 0.95; }
+
+        .dark-mode .option-text { color: #F8FAFC !important; }
+        .dark-mode .option-letter { background-color: #0F172A; color: #94A3B8; border: 1px solid #334155; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
+        .dark-mode .option-item.selected .option-letter { background-color: #3B82F6; color: #FFFFFF; border-color: #60A5FA; box-shadow: 0 0 10px rgba(59, 130, 246, 0.8); }
+        .dark-mode .option-item.correct .option-letter { background-color: #10B981; color: #FFFFFF; border-color: #34D399; box-shadow: 0 0 10px rgba(16, 185, 129, 0.8); }
+        .dark-mode .option-item.incorrect .option-letter { background-color: #EF4444; color: #FFFFFF; border-color: #F87171; box-shadow: 0 0 10px rgba(239, 68, 68, 0.8); }
+
+        .dark-mode #explanationBox { background: #1E293B !important; border: 1px solid #10B981 !important; box-shadow: 0 0 30px rgba(16, 185, 129, 0.15) !important; }
+        .dark-mode #explanationBox > div:first-child { background: linear-gradient(to right, rgba(16, 185, 129, 0.15), rgba(20, 184, 166, 0.1)) !important; border-bottom: 1px solid rgba(16, 185, 129, 0.3) !important; }
+        .dark-mode #explanationBox h3 { color: #34D399 !important; text-shadow: 0 0 10px rgba(52, 211, 153, 0.3); }
+        .dark-mode .explanation-text { color: #F1F5F9 !important; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark-mode ::-webkit-scrollbar-thumb { background: #475569; }
+        
+        .calc-btn-sci { background-color: #475569; }
+        .calc-btn-sci:hover { background-color: #334155; }
+    </style>
+</head>
+<body class="flex flex-col h-[100dvh] overflow-x-hidden antialiased selection:bg-primary selection:text-white relative">
+
+    <header class="glass-nav sticky top-0 z-40 px-2 sm:px-6 py-2 sm:py-3 flex justify-between items-center h-auto min-h-[3.5rem] w-full flex-wrap sm:flex-nowrap gap-2">
+        <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+            <a href="dashboard.html" class="p-1.5 sm:p-2 text-slate-400 hover:text-error hover:bg-red-50 rounded-lg transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </a>
+            <div class="h-5 w-px bg-slate-300 dark:bg-slate-700"></div>
+            <span class="font-extrabold text-slate-800 dark:text-white tracking-tight flex items-center gap-2 hidden min-[380px]:flex">
+                <img src="1000004103_2.png" alt="MEDQ" class="h-6 w-6 sm:h-8 sm:w-8 rounded-md shadow-sm">
+                <span class="hidden md:inline text-lg">Clinical Block</span>
+            </span>
+        </div>
+
+        <div class="flex items-center gap-1 sm:gap-3 shrink-0 overflow-x-auto custom-scrollbar pb-1 sm:pb-0 w-full sm:w-auto justify-end">
+            <div class="flex items-center gap-1.5 px-2 py-1 sm:px-4 sm:py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg font-mono text-[10px] sm:text-sm font-bold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0" id="sessionTimerContainer">
+                <i data-lucide="clock" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400"></i> <span id="sessionTimer">00:00</span>
+            </div>
+            
+            <button id="provocateurToggle" class="flex items-center justify-center gap-1 px-2 py-1.5 bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-[10px] sm:text-xs font-bold shadow-sm transition-colors whitespace-nowrap min-w-fit">
+                <i data-lucide="flame" class="w-3.5 h-3.5"></i> <span>المستفز</span>
+            </button>
+            
+            <button id="calcToggle" class="flex items-center justify-center gap-1 px-2 py-1.5 bg-slate-800 text-white rounded-lg text-[10px] sm:text-sm font-bold shadow-sm hover:bg-slate-700 transition-colors shrink-0">
+                <i data-lucide="calculator" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+            </button>
+            
+            <button id="themeToggleBtn" class="p-1.5 text-slate-400 hover:text-primary transition-colors cursor-pointer shrink-0" title="Toggle Dark Mode">
+                <i data-lucide="moon" id="themeIcon" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-4 sm:py-8 pb-32 w-full">
+        <div class="question-card">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 sm:gap-0 mb-6 sm:mb-8 border-b border-borderLight pb-4 w-full">
+                <div class="flex gap-2 flex-wrap w-full sm:w-auto">
+                    <span id="qSubjectBadge" class="px-3 py-1 sm:px-4 sm:py-1.5 bg-primary/10 text-primary text-[10px] sm:text-xs font-black rounded-lg uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis max-w-[140px] sm:max-w-none">Loading...</span>
+                    <span id="qDifficultyBadge" class="px-3 py-1 sm:px-4 sm:py-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] sm:text-xs font-black rounded-lg uppercase tracking-wider shrink-0">...</span>
+                </div>
+                <div class="flex items-center gap-2 text-slate-500 text-xs sm:text-sm font-bold tracking-wide shrink-0" id="questionCounterContainer">
+                    <i data-lucide="list-ordered" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Scenario</span>
+                    <select id="questionJumper" class="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 outline-primary font-black text-primary cursor-pointer text-xs sm:text-sm"></select>
+                    <span id="totalQuestionsDisplay">of -</span>
+                </div>
+            </div>
+            
+            <div id="qMediaContainer" class="mb-6 sm:mb-8 hidden w-full rounded-2xl overflow-hidden shadow-lg bg-black flex items-center justify-center min-h-[200px] sm:min-h-[300px]"></div>
+
+            <div id="questionText" class="scenario-text">
+                <div class="flex items-center text-slate-400 text-base sm:text-lg font-medium">
+                    <i data-lucide="loader-2" class="w-5 h-5 sm:w-6 sm:h-6 animate-spin me-3 text-primary"></i> Accessing clinical database...
+                </div>
+            </div>
+
+            <div id="optionsContainer" class="flex flex-col gap-2 sm:gap-3 mb-8 w-full"></div>
+
+            <div id="explanationBox" class="hidden overflow-hidden bg-white rounded-2xl border border-borderLight shadow-lg mt-6 sm:mt-8 transform transition-all duration-500 w-full">
+                <div class="bg-gradient-to-r from-emerald-50 to-teal-50 px-4 sm:px-6 py-4 sm:py-5 border-b border-emerald-100 flex items-center gap-3">
+                    <div class="p-1.5 sm:p-2 bg-white rounded-lg shadow-sm text-accent"><i data-lucide="lightbulb" class="w-5 h-5 sm:w-6 sm:h-6"></i></div>
+                    <h3 class="text-base sm:text-xl font-black text-emerald-900 tracking-wide">Clinical Explanation</h3>
+                </div>
+                <div class="p-5 sm:p-8">
+                    <p id="explanationText" class="explanation-text"></p>
+                    
+                    <div id="wrongExplanationBox" class="hidden mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
+                        <h4 class="font-bold text-rose-600 mb-3 flex items-center gap-2"><i data-lucide="x-circle" class="w-5 h-5"></i> Why other options are incorrect</h4>
+                        <p id="wrongExplanationText" class="explanation-text !text-slate-600 dark:!text-slate-300"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="fixed bottom-0 w-full glass-nav px-3 sm:px-6 py-3 sm:py-4 flex justify-between items-center z-40">
+        <div class="flex gap-2 sm:gap-3">
+            <button id="reportBtn" class="flex items-center justify-center gap-2 p-3 sm:px-4 sm:py-2.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-xl font-bold transition-colors">
+                <i data-lucide="alert-triangle" class="w-5 h-5 sm:w-4 sm:h-4"></i> <span class="hidden sm:inline">Report Issue</span>
+            </button>
+            <button id="bookmarkBtn" class="flex items-center justify-center gap-2 p-3 sm:px-4 sm:py-2.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold transition-colors">
+                <i data-lucide="bookmark" class="w-5 h-5 sm:w-4 sm:h-4 transition-colors"></i> <span class="hidden sm:inline">Save</span>
+            </button>
+        </div>
+        <div class="flex gap-2 sm:gap-4 items-center shrink-0">
+            <button id="submitBtn" disabled class="flex justify-center items-center gap-2 px-5 py-3 sm:px-12 sm:py-4 bg-primary text-white font-black text-base sm:text-lg rounded-xl shadow-lg shadow-primary/30 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all tracking-wide whitespace-nowrap">
+                Submit Answer
+            </button>
+            <button id="nextBtn" class="hidden flex justify-center items-center gap-2 px-5 py-3 sm:px-12 sm:py-4 bg-slate-900 text-white font-black text-base sm:text-lg rounded-xl shadow-lg hover:-translate-y-0.5 transition-all tracking-wide whitespace-nowrap">
+                Next <span class="hidden sm:inline">Scenario</span> <i data-lucide="arrow-right" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+            </button>
+        </div>
+    </footer>
+
+    <!-- ADVANCED CALCULATOR & MRCP LAB VALUES OVERLAY -->
+    <div id="calcOverlay" class="hidden fixed sm:absolute top-16 sm:top-20 right-2 sm:right-8 bg-slate-800 rounded-2xl sm:rounded-3xl shadow-2xl z-50 w-[calc(100vw-1rem)] sm:w-[400px] border border-slate-700 mx-auto overflow-hidden flex flex-col max-h-[80vh]">
+        
+        <!-- Tabs Header -->
+        <div class="flex bg-slate-900 border-b border-slate-700">
+            <button id="tabCalc" class="flex-1 py-3 text-white font-bold bg-slate-800 border-b-2 border-primary flex items-center justify-center gap-2 text-sm">
+                <i data-lucide="calculator" class="w-4 h-4"></i> Calculator
+            </button>
+            <button id="tabLabs" class="flex-1 py-3 text-slate-400 font-bold hover:text-white flex items-center justify-center gap-2 text-sm">
+                <i data-lucide="activity" class="w-4 h-4"></i> Lab Values
+            </button>
+            <button id="closeCalc" class="p-3 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+
+        <!-- Calculator Body -->
+        <div id="calcBody" class="p-4 sm:p-5 flex-1">
+            <div class="text-white text-right text-2xl sm:text-3xl mb-4 p-4 bg-slate-900 rounded-xl font-mono overflow-hidden shadow-inner border border-slate-800 tracking-wider h-16 flex items-center justify-end" id="calcDisplay">0</div>
+            
+            <div class="grid grid-cols-5 gap-2">
+                <!-- Scientific Row 1 -->
+                <button class="calc-btn calc-btn-sci p-2 text-white rounded-lg font-bold text-xs sm:text-sm shadow-sm" data-val="sin(">sin</button>
+                <button class="calc-btn calc-btn-sci p-2 text-white rounded-lg font-bold text-xs sm:text-sm shadow-sm" data-val="cos(">cos</button>
+                <button class="calc-btn calc-btn-sci p-2 text-white rounded-lg font-bold text-xs sm:text-sm shadow-sm" data-val="tan(">tan</button>
+                <button class="calc-btn calc-btn-sci p-2 text-white rounded-lg font-bold text-xs sm:text-sm shadow-sm" data-val="(">(</button>
+                <button class="calc-btn calc-btn-sci p-2 text-white rounded-lg font-bold text-xs sm:text-sm shadow-sm" data-val=")">)</button>
+                
+                <!-- Row 2 -->
+                <button class="calc-btn calc-btn-sci p-2 text-white rounded-lg font-bold text-xs sm:text-sm shadow-sm" data-val="ln(">ln</button>
+                <button class="calc-btn p-3 bg-slate-700 text-white rounded-lg font-bold hover:bg-slate-600 transition-colors shadow-sm" data-val="7">7</button>
+                <button class="calc-btn p-3 bg-slate-700 text-white rounded-lg font-bold hover:bg-slate-600 transition-colors shadow-sm" data-val="8">8</button>
+                <button class="calc-btn p-3 bg-slate-700 text-white rounded-lg font-bold hover:bg-slate-600 transition-colors shadow-sm" data-val="9">9</button>
+                <button class="calc-btn p-3 bg-primary/20 text-primary rounded-lg font-bold hover:bg-primary hover:text-white transition-colors shadow-sm text-lg" data-val="/">÷</button>
+                
+                <!-- Row 3 -->
+                <button class="calc-btn calc-btn-sci p-2 text-white rounded-lg font-bold text-xs sm:text-sm shadow-sm" data-val="log(">log</button>
+                <button class="calc-btn p-3 bg-slate-700 text-white rounded-lg font-bold hover:bg-slate-600 transition-colors shadow-sm" data-val="4">4</button>
+                <button class="calc-btn p-3 bg-slate-700 text-white rounded-lg font-bold hover:bg-slate-600 transition-colors shadow-sm" data-val="5">5</button>
+                <button class="calc-btn p-3 bg-slate-700 text-white rounded-lg font-bold hover:bg-slate-600 transition-colors shadow-sm" data-val="6">6</button>
+                <button class="calc-btn p-3 bg-primary/20 text-primary rounded-lg font-bold hover:bg-primary hover:text-white transition-colors shadow-sm text-lg" data-val="*">×</button>
+                
+                <!-- Row 4 -->
+                <button class="calc-btn calc-btn-sci p-2 text-white rounded-lg font-bold text-xs sm:text-sm shadow-sm" data-val="√(">√</button>
+                <button class="calc-btn p-3 bg-slate-700 text-white rounded-lg font-bold hover:bg-slate-600 transition-colors shadow-sm" data-val="1">1</button>
+                <button class="calc-btn p-3 bg-slate-700 text-white rounded-lg font-bold hover:bg-slate-600 transition-colors shadow-sm" data-val="2">2</button>
+                <button class="calc-btn p-3 bg-slate-700 text-white rounded-lg font-bold hover:bg-slate-600 transition-colors shadow-sm" data-val="3">3</button>
+                <button class="calc-btn p-3 bg-primary/20 text-primary rounded-lg font-bold hover:bg-primary hover:text-white transition-colors shadow-sm text-lg" data-val="-">-</button>
+                
+                <!-- Row 5 -->
+                <button class="calc-btn calc-btn-sci p-2 text-white rounded-lg font-bold text-xs sm:text-sm shadow-sm" data-val="^">x<sup>y</sup></button>
+                <button class="calc-btn p-3 bg-slate-700 text-white rounded-lg font-bold hover:bg-slate-600 transition-colors shadow-sm" data-val="0">0</button>
+                <button class="calc-btn p-3 bg-slate-700 text-white rounded-lg font-bold hover:bg-slate-600 transition-colors shadow-sm" data-val=".">.</button>
+                <button class="calc-btn p-3 bg-error/20 text-error rounded-lg font-bold hover:bg-error hover:text-white transition-colors shadow-sm" data-val="C">C</button>
+                <button class="calc-btn p-3 bg-primary/20 text-primary rounded-lg font-bold hover:bg-primary hover:text-white transition-colors shadow-sm text-lg" data-val="+">+</button>
+                
+                <!-- Row 6 -->
+                <button class="calc-btn p-3 bg-accent text-white rounded-lg font-bold hover:bg-emerald-600 transition-colors col-span-5 mt-2 shadow-md text-xl" data-val="=">=</button>
+            </div>
+        </div>
+
+        <!-- Labs Body (Hidden by default) -->
+        <div id="labsBody" class="hidden flex-col h-full bg-slate-800">
+            <div class="p-3 bg-slate-900 border-b border-slate-700 flex justify-between items-center shrink-0">
+                <span class="text-xs font-bold text-slate-300">MRCP Reference Values</span>
+                <select id="labUnitToggle" class="bg-slate-700 text-white text-xs font-bold py-1 px-2 rounded outline-none border border-slate-600 cursor-pointer">
+                    <option value="si">SI Units (mmol/L)</option>
+                    <option value="us">US Units (mg/dL)</option>
+                </select>
+            </div>
+            <div class="overflow-y-auto custom-scrollbar p-0 flex-1 max-h-[350px]">
+                <table class="w-full text-left text-sm text-slate-300">
+                    <thead class="bg-slate-700/50 text-xs uppercase text-slate-400 sticky top-0">
+                        <tr><th class="px-4 py-2">Analyte</th><th class="px-4 py-2 text-right">Normal Range</th></tr>
+                    </thead>
+                    <tbody id="labValuesTable" class="divide-y divide-slate-700/50">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>lucide.createIcons();</script>
+    <script type="module" src="js/question.js"></script>
+    <script>
+        const themeBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        if(localStorage.getItem('medq_theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeIcon.setAttribute('data-lucide', 'sun');
+        }
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            if(document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('medq_theme', 'dark');
+                themeIcon.setAttribute('data-lucide', 'sun');
+            } else {
+                localStorage.setItem('medq_theme', 'light');
+                themeIcon.setAttribute('data-lucide', 'moon');
+            }
+            lucide.createIcons();
+        });
+    </script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(registration => console.log('ServiceWorker registration successful with scope: ', registration.scope))
+            .catch(err => console.log('ServiceWorker registration failed: ', err));
+        });
+      }
+    </script>
+</body>
+</html>

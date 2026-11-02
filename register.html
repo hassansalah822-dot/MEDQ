@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEDQ | Create Account</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2563EB">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { primary: '#2563EB', secondary: '#4F46E5', accent: '#10B981', background: '#F8FAFC', textMain: '#0F172A', textMuted: '#64748B', borderLight: '#E2E8F0' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.5); }
+        .input-float:focus-within label { transform: translateY(-1.5rem) scale(0.85); color: #2563EB; }
+        .select-float select:valid + label, .select-float select:focus + label { transform: translateY(-1.5rem) scale(0.85); color: #2563EB; }
+    </style>
+</head>
+<body class="grid lg:grid-cols-2 min-h-screen overflow-x-hidden selection:bg-primary selection:text-white">
+
+    <!-- Left Side Content (Hidden on mobile) -->
+    <div class="hidden lg:flex flex-col bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-secondary items-center justify-center p-12 relative overflow-hidden h-full">
+        <div class="absolute inset-0 opacity-10" style="background-image: repeating-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), repeating-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff); background-position: 0 0, 20px 20px; background-size: 40px 40px;"></div>
+        
+        <div class="relative z-10 max-w-lg">
+            <div class="w-20 h-20 bg-white rounded-3xl flex items-center justify-center shadow-2xl mb-8 transform -rotate-6">
+                <i data-lucide="stethoscope" class="w-10 h-10 text-primary"></i>
+            </div>
+            <h1 class="text-4xl font-extrabold text-white leading-tight mb-4">Your journey to clinical excellence starts here.</h1>
+            <p class="text-blue-100 text-lg leading-relaxed mb-8">Create your account to unlock your 3-Day Free Trial and join an exclusive network of medical professionals.</p>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 text-white">
+                    <h3 class="font-bold text-xl mb-1 flex items-center gap-2"><i data-lucide="database" class="w-5 h-5 text-accent"></i> 10k+</h3>
+                    <p class="text-sm text-blue-200">Clinical Scenarios</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 text-white">
+                    <h3 class="font-bold text-xl mb-1 flex items-center gap-2"><i data-lucide="pie-chart" class="w-5 h-5 text-warning"></i> Deep</h3>
+                    <p class="text-sm text-blue-200">Performance Analytics</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Side Content (Form) -->
+    <div class="flex items-center justify-center p-6 sm:p-8 relative z-10 w-full min-h-screen">
+        <div class="absolute top-0 right-0 w-72 h-72 bg-primary/10 rounded-full blur-3xl -z-10 translate-x-1/4 -translate-y-1/4"></div>
+
+        <div class="w-full max-w-lg glass-panel p-8 sm:p-10 rounded-3xl shadow-2xl shadow-primary/5">
+            
+            <div class="flex justify-center mb-8">
+                <img src="1000004103_2.png" alt="MEDQ Logo" class="h-24 w-auto rounded-3xl shadow-md">
+            </div>
+
+            <h2 class="text-3xl font-bold text-textMain mb-2 text-center">Create Account</h2>
+            <p class="text-textMuted mb-8 text-center">Set up your profile to start your 3-day free trial.</p>
+
+            <form id="registerForm" class="space-y-4">
+                
+                <div class="relative bg-white rounded-xl border border-borderLight px-4 py-3 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all input-float group">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="user" class="w-5 h-5 text-textMuted group-focus-within:text-primary transition-colors"></i>
+                        <div class="flex-1 relative h-6">
+                            <label class="absolute left-0 top-0 text-textMuted text-sm transition-all duration-200 pointer-events-none origin-left">Full Name</label>
+                            <input type="text" id="nameInput" placeholder="e.g., Dr. Hassan Salah Aldin" required class="w-full h-full bg-transparent border-none outline-none text-textMain pt-2 placeholder:text-transparent focus:placeholder:text-slate-300">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative bg-white rounded-xl border border-borderLight px-4 py-3 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all input-float group">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="mail" class="w-5 h-5 text-textMuted group-focus-within:text-primary transition-colors"></i>
+                        <div class="flex-1 relative h-6">
+                            <label class="absolute left-0 top-0 text-textMuted text-sm transition-all duration-200 pointer-events-none origin-left">Email address</label>
+                            <input type="email" id="regEmailInput" required class="w-full h-full bg-transparent border-none outline-none text-textMain pt-2">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative bg-white rounded-xl border border-borderLight px-4 py-3 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all input-float group">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="phone" class="w-5 h-5 text-textMuted group-focus-within:text-primary transition-colors"></i>
+                        <div class="flex-1 relative h-6">
+                            <label class="absolute left-0 top-0 text-textMuted text-sm transition-all duration-200 pointer-events-none origin-left">Phone Number (Optional)</label>
+                            <input type="tel" id="regPhoneInput" class="w-full h-full bg-transparent border-none outline-none text-textMain pt-2">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative bg-white rounded-xl border border-borderLight px-4 py-3 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all select-float group">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="briefcase" class="w-5 h-5 text-textMuted group-focus-within:text-primary transition-colors"></i>
+                        <div class="flex-1 relative h-6">
+                            <select id="regProfessionInput" required class="w-full h-full bg-transparent border-none outline-none text-textMain pt-2 appearance-none text-sm z-10 relative">
+                                <option value="" disabled selected hidden></option>
+                                <option value="Student">Student</option>
+                                <option value="House Officer">House Officer</option>
+                                <option value="Medical Officer / Specialized">Medical Officer / Specialized</option>
+                                <option value="Registrar">Registrar</option>
+                                <option value="Consultant">Consultant</option>
+                            </select>
+                            <label class="absolute left-0 top-0 text-textMuted text-sm transition-all duration-200 pointer-events-none origin-left z-0">Profession</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative bg-white rounded-xl border border-borderLight px-4 py-3 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all input-float group">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="building" class="w-5 h-5 text-textMuted group-focus-within:text-primary transition-colors"></i>
+                        <div class="flex-1 relative h-6">
+                            <label class="absolute left-0 top-0 text-textMuted text-sm transition-all duration-200 pointer-events-none origin-left">University Name</label>
+                            <input type="text" id="regUniversityInput" required class="w-full h-full bg-transparent border-none outline-none text-textMain pt-2">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative bg-white rounded-xl border border-borderLight px-4 py-3 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all input-float group">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="shield" class="w-5 h-5 text-textMuted group-focus-within:text-primary transition-colors"></i>
+                        <div class="flex-1 relative h-6">
+                            <label class="absolute left-0 top-0 text-textMuted text-sm transition-all duration-200 pointer-events-none origin-left">Password (Min 6 chars)</label>
+                            <input type="password" id="regPasswordInput" required minlength="6" class="w-full h-full bg-transparent border-none outline-none text-textMain pt-2">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-textMain text-white font-bold rounded-xl py-4 mt-6 shadow-lg hover:-translate-y-0.5 hover:shadow-xl transition-all flex justify-center items-center gap-2">
+                    Complete Registration <i data-lucide="user-plus" class="w-5 h-5"></i>
+                </button>
+            </form>
+
+            <p class="text-center text-textMuted mt-8 text-sm">
+                Already have an account? <a href="login.html" class="font-bold text-primary hover:text-secondary transition-colors">Sign in here</a>
+            </p>
+        </div>
+    </div>
+
+    <script>lucide.createIcons();</script>
+    <script type="module" src="js/register.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(registration => console.log('ServiceWorker registration successful with scope: ', registration.scope))
+            .catch(err => console.log('ServiceWorker registration failed: ', err));
+        });
+      }
+    </script>
+</body>
+</html>

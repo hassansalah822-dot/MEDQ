@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>MEDQ | Performance Analytics</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2563EB">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['Manrope', 'sans-serif'] }, colors: { primary: '#2563EB', secondary: '#4F46E5', accent: '#10B981', warning: '#F59E0B', error: '#EF4444', textMain: '#0F172A', textMuted: '#64748B', borderLight: '#E2E8F0' }, boxShadow: { 'soft': '0 10px 40px -10px rgba(0,0,0,0.08)' } } }
+        }
+    </script>
+
+    <style>
+        body { background-color: #F8FAFC; color: #0F172A; transition: background-color 0.3s, color 0.3s; font-family: 'Manrope', sans-serif; overflow-x: hidden; }
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        
+        body.dark-mode { background-color: #0F172A; color: #F8FAFC; }
+        .dark-mode .bg-white { background-color: #1E293B !important; border-color: #334155 !important; color: #F8FAFC !important; }
+        .dark-mode .text-textMain { color: #F8FAFC !important; }
+        .dark-mode .text-textMuted { color: #94A3B8 !important; }
+        .dark-mode .bg-slate-50 { background-color: #0F172A !important; border-color: #334155 !important; color: #F8FAFC !important; }
+        .dark-mode .bg-slate-100 { background-color: #1E293B !important; }
+        .dark-mode .glass { background: rgba(30, 41, 59, 0.85) !important; border-color: rgba(255,255,255,0.1) !important; }
+        .dark-mode .border-borderLight { border-color: #334155 !important; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="flex h-[100dvh] overflow-x-hidden antialiased selection:bg-primary selection:text-white w-full">
+
+    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-30 hidden md:hidden backdrop-blur-sm transition-opacity"></div>
+
+    <aside id="appSidebar" class="fixed inset-y-0 left-0 w-72 my-4 mx-4 bg-white rounded-3xl shadow-2xl border border-borderLight flex flex-col transition-transform duration-300 z-40 -translate-x-[120%] md:relative md:translate-x-0 md:flex md:w-64 h-[calc(100dvh-2rem)] md:h-auto md:shadow-soft">
+        <div class="p-6 flex items-center justify-between md:justify-center border-b border-borderLight/50">
+            <img src="1000004103_2.png" alt="MEDQ Logo" class="h-12 md:h-16 w-auto rounded-2xl shadow-sm hover:scale-105 transition-transform">
+            <button id="closeSidebarBtn" class="md:hidden p-2 text-slate-400 hover:text-error bg-slate-50 rounded-lg"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto custom-scrollbar">
+            <p class="px-2 text-xs font-semibold text-textMuted uppercase tracking-wider mb-2">Learning</p>
+            <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 text-textMuted hover:bg-slate-50 hover:text-textMain rounded-xl font-medium transition-all group">
+                <i data-lucide="layout-dashboard" class="w-5 h-5 transition-transform group-hover:scale-110"></i> Dashboard
+            </a>
+            <a href="performance.html" class="flex items-center gap-3 px-3 py-2.5 bg-primary/10 text-primary rounded-xl font-medium transition-all group">
+                <i data-lucide="line-chart" class="w-5 h-5 transition-transform group-hover:scale-110"></i> Performance
+            </a>
+            
+            <p class="px-2 text-xs font-semibold text-textMuted uppercase tracking-wider mt-6 mb-2">Resources</p>
+            <button onclick="launchShortcut('bookmarks')" class="w-full flex items-center gap-3 px-3 py-2.5 text-textMuted hover:bg-slate-50 hover:text-textMain rounded-xl font-medium transition-all group">
+                <i data-lucide="bookmark" class="w-5 h-5 transition-transform group-hover:scale-110 group-hover:text-primary"></i> Saved Bookmarks
+            </button>
+
+            <p class="px-2 text-xs font-semibold text-textMuted uppercase tracking-wider mt-6 mb-2">Subject Categories</p>
+            <div id="dynamicSidebarCats" class="space-y-1">
+                <p class="text-xs text-slate-400 px-3">Loading specialties...</p>
+            </div>
+        </nav>
+
+        <div class="p-4 border-t border-borderLight/50">
+            <button id="aboutUsBtn" class="w-full flex items-center gap-3 px-3 py-2.5 text-primary hover:bg-slate-50 rounded-xl font-medium transition-all group mb-2">
+                <i data-lucide="info" class="w-5 h-5 transition-transform group-hover:scale-110"></i> About Us
+            </button>
+            <button id="logoutBtn" class="w-full flex items-center gap-3 px-3 py-2.5 text-error hover:bg-error/10 rounded-xl font-medium transition-all group">
+                <i data-lucide="log-out" class="w-5 h-5 transition-transform group-hover:-translate-x-1"></i> Sign Out
+            </button>
+        </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col h-[100dvh] overflow-x-hidden relative w-full">
+        <header class="glass sticky top-0 z-20 mx-4 mt-4 rounded-2xl px-4 sm:px-6 py-3 flex justify-between items-center shadow-sm border border-borderLight/50">
+            <div class="flex items-center gap-3 sm:gap-4">
+                <button id="mobileMenuBtn" class="md:hidden p-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl hover:text-primary transition-colors"><i data-lucide="menu" class="w-5 h-5"></i></button>
+                <h2 class="text-lg font-bold text-textMain hidden sm:block">Analytics Center</h2>
+            </div>
+            
+            <div class="flex items-center gap-2 sm:gap-4">
+                <button id="themeToggleBtn" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-600 dark:text-slate-400 hover:text-primary transition-colors cursor-pointer shadow-sm"><i data-lucide="moon" id="themeIcon" class="w-4 h-4"></i></button>
+                <a href="https://wa.me/+249901879983" target="_blank" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500 text-white rounded-full text-xs font-bold hover:bg-emerald-600 transition-colors shadow-sm cursor-pointer"><i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Support</a>
+                <a href="admin.html" class="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-accent/10 text-accent border border-accent/20 rounded-full text-xs font-bold hover:bg-accent hover:text-white transition-colors cursor-pointer"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Admin</a>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-8 pt-6 pb-24 w-full">
+            <div class="mb-6 sm:mb-8">
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-textMain tracking-tight mb-2">Performance & Insights</h1>
+                <p class="text-textMuted text-sm sm:text-lg">Identify your clinical blind spots and track your mastery over time.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 w-full max-w-full">
+                <div class="col-span-1 bg-gradient-to-br from-primary to-secondary rounded-3xl p-6 sm:p-8 text-white shadow-lg shadow-primary/20 relative overflow-hidden flex flex-col justify-center items-center">
+                    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                    <p class="text-white/80 font-semibold uppercase tracking-widest text-xs sm:text-sm mb-2 z-10">Overall Accuracy</p>
+                    <h2 class="text-5xl sm:text-6xl font-black z-10 drop-shadow-md" id="accuracyText">0%</h2>
+                    <p class="text-white/70 text-xs sm:text-sm mt-3 text-center z-10">Lifetime performance metric</p>
+                </div>
+
+                <div class="col-span-1 md:col-span-2 bg-white rounded-3xl p-5 sm:p-6 shadow-soft border border-borderLight flex flex-col">
+                    <div class="flex justify-between items-center mb-4 border-b border-borderLight pb-4">
+                        <h3 class="text-base sm:text-lg font-bold text-textMain flex items-center gap-2">
+                            <i data-lucide="pie-chart" class="text-primary w-4 h-4 sm:w-5 sm:h-5"></i> Answer Distribution
+                        </h3>
+                    </div>
+                    <div class="flex-1 relative w-full flex justify-center items-center min-h-[200px] sm:min-h-[250px]">
+                        <canvas id="accuracyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-5 sm:p-8 shadow-soft border border-borderLight w-full max-w-full">
+                <h3 class="text-lg sm:text-xl font-bold text-textMain mb-6 flex items-center gap-2">
+                    <i data-lucide="microscope" class="text-secondary w-5 h-5 sm:w-6 sm:h-6"></i> Subject Mastery
+                </h3>
+                <div id="subjectMasteryContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+                    <p class="text-textMuted text-sm sm:text-base">Loading clinical data...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- About Us Modal -->
+    <div id="aboutModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex justify-center items-center p-4">
+        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl max-w-sm w-full border border-slate-200 transform transition-all text-center relative max-h-[90dvh] overflow-y-auto custom-scrollbar">
+            <button id="closeAboutBtn" class="absolute top-4 right-4 text-slate-400 hover:text-error transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-sm">
+                <i data-lucide="user" class="w-8 h-8 sm:w-10 sm:h-10"></i>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-textMain mb-1" id="aboutName">Loading...</h2>
+            <p class="text-primary font-bold mb-4 text-xs sm:text-sm uppercase tracking-wider" id="aboutTitle"></p>
+            <p class="text-slate-600 text-xs sm:text-sm leading-relaxed" id="aboutBio"></p>
+        </div>
+    </div>
+
+    <!-- Setup Modal (Configure Block) -->
+    <div id="setupModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex justify-center items-center p-4">
+        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl max-w-md w-full border border-slate-200 transform transition-all max-h-[90dvh] overflow-y-auto custom-scrollbar">
+            <h2 class="text-xl sm:text-2xl font-extrabold text-textMain mb-6 flex items-center gap-2">
+                <i data-lucide="settings-2" class="text-primary w-5 h-5 sm:w-6 sm:h-6"></i> Block Setup
+            </h2>
+            <div class="space-y-4 mb-6 sm:mb-8">
+                <div>
+                    <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1">Session Mode</label>
+                    <select id="configMode" class="w-full p-2.5 sm:p-3 rounded-xl border border-borderLight outline-primary bg-slate-50 text-sm">
+                        <option value="study">Study Mode (Immediate Feedback)</option>
+                        <option value="exam">Exam Mode (No Explanations)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1">Category</label>
+                    <select id="configCat" class="w-full p-2.5 sm:p-3 rounded-xl border border-borderLight outline-primary bg-slate-50 text-sm">
+                        <option value="All">All Categories</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1">Section</label>
+                    <select id="configSec" class="w-full p-2.5 sm:p-3 rounded-xl border border-borderLight outline-primary bg-slate-50 text-sm">
+                        <option value="All">All Sections</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1">Year</label>
+                    <select id="configYear" class="w-full p-2.5 sm:p-3 rounded-xl border border-borderLight outline-primary bg-slate-50 text-sm">
+                        <option value="All">All Years</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4">
+                <button id="cancelSetupBtn" class="w-full sm:flex-1 py-3 bg-slate-100 text-textMuted font-bold rounded-xl hover:bg-slate-200 transition-colors">Cancel</button>
+                <button id="launchQuizBtn" class="w-full sm:flex-1 py-3 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30 hover:bg-blue-700 transition-colors">Launch Block</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function launchShortcut(mode) {
+            localStorage.setItem('medq_mode', mode); 
+            localStorage.setItem('medq_category', 'All');
+            localStorage.setItem('medq_section', 'All');
+            localStorage.setItem('medq_year', 'All');
+            window.location.href = 'question.html';
+        }
+    </script>
+
+    <script>lucide.createIcons();</script>
+    <script type="module" src="js/performance.js"></script>
+    <script>
+        const themeBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        if(localStorage.getItem('medq_theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeIcon.setAttribute('data-lucide', 'sun');
+        }
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            if(document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('medq_theme', 'dark');
+                themeIcon.setAttribute('data-lucide', 'sun');
+            } else {
+                localStorage.setItem('medq_theme', 'light');
+                themeIcon.setAttribute('data-lucide', 'moon');
+            }
+            lucide.createIcons();
+        });
+    </script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(registration => console.log('ServiceWorker registration successful with scope: ', registration.scope))
+            .catch(err => console.log('ServiceWorker registration failed: ', err));
+        });
+      }
+    </script>
+</body>
+</html>

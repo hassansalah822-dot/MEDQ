@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>MEDQ | Admin Console</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Manrope', 'sans-serif'] }, colors: { primary: '#2563EB', error: '#EF4444', warning: '#F59E0B', textMain: '#0F172A', textMuted: '#64748B' } } } }
+    </script>
+    <style>
+        body { font-family: 'Manrope', sans-serif; background-color: #F8FAFC; overflow-x: hidden; }
+        .admin-view { display: none; }
+        .admin-view.active { display: block; }
+        .nav-btn.active { background-color: #2563EB; color: white; border-color: #2563EB; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body class="flex h-[100dvh] overflow-x-hidden w-full bg-slate-50">
+
+    <aside class="w-64 bg-slate-900 text-white hidden md:flex flex-col shrink-0">
+        <div class="p-6 flex items-center justify-center border-b border-slate-800">
+            <img src="1000004103_2.png" alt="MEDQ Logo" class="h-16 w-auto rounded-2xl shadow-sm hover:scale-105 transition-transform">
+        </div>
+        <nav class="space-y-2 flex-1 p-4 overflow-y-auto custom-scrollbar">
+            <p class="px-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Navigation</p>
+            <button onclick="switchTab('view-dashboard', this)" class="nav-btn active w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-xl font-medium transition-all text-left">
+                <i data-lucide="bar-chart-3" class="w-5 h-5"></i> Dashboard
+            </button>
+            <button onclick="switchTab('view-users', this)" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-xl font-medium transition-all text-left">
+                <i data-lucide="users" class="w-5 h-5"></i> Manage Users
+            </button>
+            <button onclick="switchTab('view-database', this)" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-xl font-medium transition-all text-left">
+                <i data-lucide="database" class="w-5 h-5"></i> Q-Bank Database
+            </button>
+            <button onclick="switchTab('view-live-exams', this)" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-xl font-medium transition-all text-left">
+                <i data-lucide="radio" class="w-5 h-5"></i> Live Exams
+            </button>
+            <button onclick="switchTab('view-bulk', this)" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-xl font-medium transition-all text-left">
+                <i data-lucide="upload-cloud" class="w-5 h-5"></i> Bulk Upload
+            </button>
+            <button onclick="switchTab('view-reports', this)" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-xl font-medium transition-all text-left">
+                <i data-lucide="flag" class="w-5 h-5"></i> Flagged Reports
+            </button>
+            <button onclick="switchTab('view-settings', this)" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-xl font-medium transition-all text-left">
+                <i data-lucide="settings" class="w-5 h-5"></i> Settings
+            </button>
+
+            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 mt-6 text-slate-400 hover:text-white border border-slate-700 rounded-xl transition-colors">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i> Back to App
+            </a>
+        </nav>
+    </aside>
+
+    <main class="flex-1 p-4 md:p-8 overflow-y-auto h-[100dvh] relative custom-scrollbar w-full max-w-full">
+        <div class="md:hidden flex flex-wrap gap-2 mb-6 bg-white p-3 rounded-2xl shadow-sm border border-slate-200">
+            <button onclick="switchTab('view-dashboard', this)" class="nav-btn active px-3 py-2 bg-slate-100 text-xs sm:text-sm font-bold rounded-lg flex-1 whitespace-nowrap">Dashboard</button>
+            <button onclick="switchTab('view-users', this)" class="nav-btn px-3 py-2 bg-slate-100 text-xs sm:text-sm font-bold rounded-lg flex-1 whitespace-nowrap">Users</button>
+            <button onclick="switchTab('view-database', this)" class="nav-btn px-3 py-2 bg-slate-100 text-xs sm:text-sm font-bold rounded-lg flex-1 whitespace-nowrap">Database</button>
+            <button onclick="switchTab('view-live-exams', this)" class="nav-btn px-3 py-2 bg-slate-100 text-xs sm:text-sm font-bold rounded-lg flex-1 whitespace-nowrap">Exams</button>
+        </div>
+
+        <div class="w-full max-w-5xl mx-auto overflow-hidden">
+            
+            <div id="view-dashboard" class="admin-view active">
+                <div class="mb-6 sm:mb-8">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-textMain">Activation Metrics</h1>
+                    <p class="text-slate-500 text-sm sm:text-base">Monitor your platform's activation volume.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-12">
+                    <div class="col-span-1 md:col-span-2 bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
+                        <h2 class="text-lg sm:text-xl font-bold text-textMain mb-4 flex items-center gap-2">
+                            <i data-lucide="bar-chart-3" class="text-primary w-4 h-4 sm:w-5 sm:h-5"></i> Activation Growth
+                        </h2>
+                        <div class="flex-1 relative w-full min-h-[200px] sm:min-h-[250px]">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-span-1 bg-gradient-to-br from-emerald-500 to-teal-600 p-6 sm:p-8 rounded-2xl shadow-sm text-white flex flex-col justify-center items-center text-center relative overflow-hidden">
+                        <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                        <p class="text-white/80 font-bold uppercase tracking-wider text-[10px] sm:text-xs mb-2 z-10">Total Value</p>
+                        <h3 class="text-4xl sm:text-5xl font-black mb-2 z-10 drop-shadow-md" id="totalRevenueText">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-users" class="admin-view">
+                <div class="mb-6 sm:mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-textMain flex items-center gap-3 flex-wrap">
+                            Manage Users 
+                            <span id="totalUsersBadge" class="bg-primary/10 text-primary text-xs sm:text-sm px-3 py-1 sm:px-4 sm:py-1.5 rounded-full font-bold shadow-sm border border-primary/20">Total: Loading...</span>
+                        </h1>
+                        <p class="text-slate-500 mt-2 text-sm sm:text-base">Manage access, view demographics, and grant evaluations.</p>
+                    </div>
+                    <button id="bulkEmailBtn" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary text-white px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl font-bold hover:bg-blue-700 shadow transition-colors text-sm sm:text-base">
+                        <i data-lucide="mail" class="w-4 h-4"></i> Email All Users
+                    </button>
+                </div>
+
+                <div class="mb-6 relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i data-lucide="search" class="text-slate-400 w-5 h-5"></i>
+                    </div>
+                    <input type="text" id="adminUserSearch" placeholder="Search users by name, email, or profession..." class="w-full pl-10 p-3 rounded-xl border border-slate-200 outline-primary bg-white text-sm shadow-sm transition-shadow focus:shadow-md">
+                </div>
+
+                <div class="bg-white p-4 sm:p-8 rounded-2xl shadow-sm border border-slate-200 mb-12 w-full max-w-full overflow-hidden">
+                    <div id="adminUserList" class="space-y-4"></div>
+                    <button id="loadMoreUsersBtn" class="w-full mt-6 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors hidden">
+                        Load More Users
+                    </button>
+                </div>
+            </div>
+
+            <div id="view-database" class="admin-view">
+                <div class="mb-6 sm:mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-textMain">Q-Bank Database</h1>
+                        <p class="text-slate-500 text-sm sm:text-base">Inject new scenarios and manage existing content.</p>
+                    </div>
+                    <button type="button" id="toggleAddScenarioBtn" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-emerald-500 text-white px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl font-bold hover:bg-emerald-600 shadow transition-colors text-sm sm:text-base">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Add New Scenario
+                    </button>
+                </div>
+
+                <div class="mb-8 bg-white p-5 sm:p-8 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-lg sm:text-xl font-bold text-textMain mb-4 flex items-center gap-2">
+                        <i data-lucide="folder-kanban" class="text-primary w-5 h-5"></i> Manage Categories & Sections
+                    </h2>
+                    <p class="text-slate-500 text-sm mb-4">Sort, view, and bulk-delete categories or subjects.</p>
+                    <div id="categoryManagerList" class="space-y-4">
+                        <p class="text-slate-500 text-sm">Loading category data...</p>
+                    </div>
+                </div>
+
+                <form id="addQuestionForm" class="hidden bg-white p-5 sm:p-8 rounded-2xl shadow-md border-2 border-emerald-500/20 mb-8 w-full">
+                    <h2 class="text-lg sm:text-xl font-bold text-textMain mb-6 flex items-center gap-2"><i data-lucide="database" class="text-emerald-500 w-5 h-5"></i> Inject Single Scenario</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 sm:gap-6 mb-6">
+                        <div class="lg:col-span-1"><label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Visibility</label><select id="qStatus" class="w-full p-2.5 sm:p-3 rounded-xl border-2 border-primary/30 outline-primary bg-blue-50 font-bold text-primary text-sm"><option value="published">Live</option><option value="draft">Hidden (Draft)</option></select></div>
+                        <div class="lg:col-span-2"><label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Category</label><input list="category-options" type="text" id="qSubject" class="w-full p-2.5 sm:p-3 rounded-xl border border-slate-200 outline-primary bg-slate-50 text-sm" required><datalist id="category-options"></datalist></div>
+                        <div class="lg:col-span-1"><label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Section</label><input list="section-options" type="text" id="qSection" class="w-full p-2.5 sm:p-3 rounded-xl border border-slate-200 outline-primary bg-slate-50 text-sm" required><datalist id="section-options"></datalist></div>
+                        <div class="lg:col-span-1"><label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Difficulty</label><select id="qDifficulty" class="w-full p-2.5 sm:p-3 rounded-xl border border-slate-200 outline-primary bg-slate-50 text-sm"><option value="Easy">Easy</option><option value="Medium">Medium</option><option value="Hard">Hard</option></select></div>
+                        <div class="lg:col-span-1"><label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Year</label><input list="year-options" type="text" id="qYear" class="w-full p-2.5 sm:p-3 rounded-xl border border-slate-200 outline-primary bg-slate-50 text-sm"><datalist id="year-options"></datalist></div>
+                    </div>
+                    <div class="mb-4 sm:mb-6"><label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Topic Header</label><input type="text" id="qTopic" class="w-full p-2.5 sm:p-3 rounded-xl border border-slate-200 outline-primary bg-slate-50 text-sm" required></div>
+                    
+                    <div class="mb-4 sm:mb-6">
+                        <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Media URL (Google Drive, YouTube, Image Link)</label>
+                        <input type="url" id="qMedia" placeholder="Paste URL here..." class="w-full p-2.5 sm:p-3 rounded-xl border border-slate-200 outline-primary bg-slate-50 text-sm">
+                    </div>
+
+                    <div class="mb-4 sm:mb-6"><label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Clinical Scenario</label><textarea id="qScenario" rows="4" class="w-full p-3 sm:p-4 rounded-xl border border-slate-200 outline-primary bg-slate-50 text-sm" required></textarea></div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6">
+                        <input type="text" id="optA" placeholder="Option A" class="p-2.5 sm:p-3 rounded-lg border border-slate-200 bg-slate-50 text-sm" required>
+                        <input type="text" id="optB" placeholder="Option B" class="p-2.5 sm:p-3 rounded-lg border border-slate-200 bg-slate-50 text-sm" required>
+                        <input type="text" id="optC" placeholder="Option C" class="p-2.5 sm:p-3 rounded-lg border border-slate-200 bg-slate-50 text-sm" required>
+                        <input type="text" id="optD" placeholder="Option D" class="p-2.5 sm:p-3 rounded-lg border border-slate-200 bg-slate-50 text-sm" required>
+                        <input type="text" id="optE" placeholder="Option E (Optional)" class="sm:col-span-2 p-2.5 sm:p-3 rounded-lg border border-slate-200 bg-slate-50 text-sm">
+                    </div>
+                    <div class="flex flex-col gap-4 sm:gap-6 mb-8">
+                        <div class="w-full sm:w-1/4">
+                            <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Correct Answer</label>
+                            <select id="qCorrect" class="w-full p-2.5 sm:p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-bold text-sm">
+                                <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option>
+                            </select>
+                        </div>
+                        <div class="flex-1"><label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Main Explanation</label><textarea id="qExplanation" rows="2" class="w-full p-2.5 sm:p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm" required></textarea></div>
+                        <div class="flex-1"><label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Why other options are incorrect (Optional)</label><textarea id="qWrongExplanation" rows="2" placeholder="Explain why the remaining options are incorrect..." class="w-full p-2.5 sm:p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm"></textarea></div>
+                    </div>
+                    <button type="button" id="commitScenarioBtn" class="w-full py-3.5 sm:py-4 bg-emerald-500 text-white font-bold rounded-xl shadow-lg hover:bg-emerald-600 transition-all flex items-center justify-center gap-2 text-sm sm:text-base"><i data-lucide="cloud-upload" class="w-5 h-5"></i> Commit Scenario</button>
+                </form>
+
+                <div class="bg-white p-4 sm:p-8 rounded-2xl shadow-sm border border-slate-200 mb-12 overflow-x-auto w-full max-w-full">
+                    <div id="adminQuestionList" class="space-y-4"></div>
+                    <button id="loadMoreQuestionsBtn" class="w-full mt-6 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors hidden text-sm sm:text-base">Load More Scenarios</button>
+                </div>
+            </div>
+
+            <div id="view-live-exams" class="admin-view">
+                <div class="mb-6 sm:mb-8"><h1 class="text-2xl sm:text-3xl font-extrabold text-textMain">Live Exams</h1></div>
+                <div class="bg-gradient-to-br from-indigo-900 to-slate-900 p-5 sm:p-8 rounded-2xl shadow-lg mb-8 text-white w-full max-w-full">
+                    <h2 class="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2"><i data-lucide="radio" class="text-rose-500 animate-pulse"></i> Launch New Live Exam</h2>
+                    <form id="launchLiveExamForm" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                            <div><label class="block text-xs sm:text-sm font-bold text-indigo-200 mb-1">Exam Title</label><input type="text" id="liveExamTitle" class="w-full p-2.5 sm:p-3 rounded-xl bg-slate-800 border-none text-white text-sm" required></div>
+                            <div><label class="block text-xs sm:text-sm font-bold text-indigo-200 mb-1">Timer (Minutes)</label><input type="number" id="liveExamTimer" class="w-full p-2.5 sm:p-3 rounded-xl bg-slate-800 border-none text-white text-sm" required></div>
+                            <div class="md:col-span-2 mt-2 pt-4 border-t border-slate-700">
+                                <label class="block text-xs sm:text-sm font-bold text-indigo-200 mb-2 sm:mb-3">Selection Mode</label>
+                                <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-2 sm:mb-4">
+                                    <label class="flex items-center gap-2 cursor-pointer text-sm"><input type="radio" name="selectionMode" value="random" checked class="text-rose-500 focus:ring-rose-500 h-4 w-4"><span class="text-white font-medium">Random</span></label>
+                                    <label class="flex items-center gap-2 cursor-pointer text-sm"><input type="radio" name="selectionMode" value="manual" class="text-rose-500 focus:ring-rose-500 h-4 w-4"><span class="text-white font-medium">Manual</span></label>
+                                </div>
+                            </div>
+                            <div><label class="block text-xs sm:text-sm font-bold text-indigo-200 mb-1">Category Filter</label><input list="category-options" id="liveExamCat" value="All" class="w-full p-2.5 sm:p-3 rounded-xl bg-slate-800 border-none text-white text-sm"></div>
+                            <div><label class="block text-xs sm:text-sm font-bold text-indigo-200 mb-1">Section Filter</label><input list="section-options" id="liveExamSec" value="All" class="w-full p-2.5 sm:p-3 rounded-xl bg-slate-800 border-none text-white text-sm"></div>
+                            <div id="randomCountDiv"><label class="block text-xs sm:text-sm font-bold text-indigo-200 mb-1">Question Count</label><input type="number" id="liveExamCount" value="50" class="w-full p-2.5 sm:p-3 rounded-xl bg-slate-800 border-none text-white text-sm"></div>
+                        </div>
+                        <div id="manualSelectionDiv" class="hidden mt-4 bg-slate-800 rounded-xl p-3 sm:p-4 max-h-48 sm:max-h-64 overflow-y-auto custom-scrollbar border border-slate-700 w-full">
+                            <p class="text-xs sm:text-sm font-bold text-indigo-300 mb-2 sm:mb-3 flex items-center justify-between">Scenarios: <span class="bg-indigo-900 px-2 py-1 rounded-md text-[10px] sm:text-xs" id="manualSelectedCount">0 selected</span></p>
+                            <div id="manualQuestionsList" class="space-y-2"></div>
+                        </div>
+                        <button type="button" id="broadcastExamBtn" class="w-full py-3 sm:py-4 mt-4 sm:mt-6 bg-rose-600 text-white font-bold rounded-xl shadow-lg hover:bg-rose-700 transition-all text-sm sm:text-base">Broadcast Exam</button>
+                    </form>
+                </div>
+                <div class="bg-white p-4 sm:p-8 rounded-2xl shadow-sm border border-slate-200 overflow-x-auto w-full max-w-full">
+                    <h3 class="text-lg sm:text-xl font-bold text-textMain mb-4 border-b border-slate-100 pb-4">Exam Management & Scores</h3>
+                    <div id="adminLiveExamsList" class="space-y-4"></div>
+                </div>
+            </div>
+
+            <div id="view-bulk" class="admin-view w-full max-w-full">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-extrabold text-textMain">Bulk Upload</h1>
+                    <p class="text-slate-500">Upload multiple scenarios at once using a JSON file.</p>
+                </div>
+                <div class="bg-white p-5 sm:p-8 rounded-2xl shadow-sm border border-slate-200 mb-8 overflow-x-hidden">
+                    <p class="text-sm font-bold text-slate-700 mb-4">Select a .json file structured exactly like this:</p>
+                    <pre class="bg-slate-900 text-emerald-400 p-4 rounded-xl text-xs overflow-x-auto mb-6 shadow-inner">
+[
+  {
+    "status": "published",
+    "subject": "Medicine",
+    "section": "Cardiology",
+    "topic": "Heart Failure",
+    "difficulty": "Medium",
+    "year": "2026",
+    "scenario": "A 65-year-old male presents with...",
+    "mediaUrl": "",
+    "options": {
+      "A": "Option text 1",
+      "B": "Option text 2",
+      "C": "Option text 3",
+      "D": "Option text 4",
+      "E": "Option text 5 (Leave blank or omit if not needed)"
+    },
+    "correctAnswer": "E",
+    "explanation": "This is the main correct answer explanation...",
+    "wrongExplanation": "Here is why the other options are incorrect..."
+  }
+]
+                    </pre>
+                    <div class="relative w-full p-6 text-center border-2 border-dashed border-primary/50 rounded-xl hover:bg-blue-50 transition-colors mb-4 overflow-hidden flex flex-col items-center justify-center min-h-[100px] cursor-pointer">
+                        <input type="file" id="bulkFileInput" accept=".json,application/json,text/plain,*/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" style="font-size: 100px;">
+                        <i data-lucide="upload" class="w-8 h-8 text-primary mb-2 relative z-0 pointer-events-none"></i>
+                        <span class="text-primary font-bold relative z-0 pointer-events-none">Tap here to select JSON file</span>
+                    </div>
+                    <div id="selectedFileName" class="text-sm text-slate-500 mb-6 text-center font-bold">No file selected</div>
+
+                    <button id="processBulkBtn" class="py-3 px-6 bg-primary text-white font-bold rounded-xl w-full md:w-auto text-sm shadow-md">Upload Batch</button>
+                    <p id="bulkStatusMsg" class="mt-4 font-bold text-sm hidden"></p>
+                </div>
+            </div>
+
+            <div id="view-reports" class="admin-view">
+                <div class="mb-8 flex justify-between items-end">
+                    <div><h1 class="text-3xl font-extrabold text-textMain">Flagged Reports</h1></div>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                    <div id="adminReportsList" class="space-y-4"><p class="text-slate-500">Loading reports...</p></div>
+                </div>
+            </div>
+
+            <div id="view-settings" class="admin-view w-full max-w-full">
+                <div class="mb-8"><h1 class="text-3xl font-extrabold text-textMain">Platform Settings</h1></div>
+                <div class="bg-white p-5 sm:p-8 rounded-2xl shadow-sm border border-slate-200 mb-8 overflow-x-hidden border-l-4 border-l-primary">
+                     <button id="syncMetadataBtn" class="py-3 px-6 bg-slate-900 text-white font-bold rounded-xl w-full md:w-auto text-sm">Sync Categories</button>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mb-12 border-l-4 border-l-error">
+                    <h2 class="text-2xl font-bold text-textMain mb-6 flex items-center gap-2"><i data-lucide="lock" class="text-error w-6 h-6"></i> Category Access Levels</h2>
+                    <div id="adminCategoryAccessList" class="space-y-3"></div>
+                    <button id="saveCategoryAccessBtn" class="mt-6 py-3 px-6 bg-primary text-white font-bold rounded-xl shadow hover:bg-blue-700 transition-colors flex items-center gap-2"><i data-lucide="save" class="w-5 h-5"></i> Save Levels</button>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mb-12">
+                    <h2 class="text-2xl font-bold text-textMain mb-6 flex items-center gap-2"><i data-lucide="user-check" class="text-emerald-500 w-6 h-6"></i> Profile Settings</h2>
+                    <form id="editAboutForm" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="block text-sm font-bold text-slate-700 mb-1">Developer Name</label><input type="text" id="devName" class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50" required></div>
+                            <div><label class="block text-sm font-bold text-slate-700 mb-1">Title</label><input type="text" id="devTitle" class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50" required></div>
+                        </div>
+                        <div><label class="block text-sm font-bold text-slate-700 mb-1">Media URL</label><input type="url" id="devMedia" class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50"></div>
+                        <div><label class="block text-sm font-bold text-slate-700 mb-1">Biography</label><textarea id="devBio" rows="3" class="w-full p-4 rounded-xl border border-slate-200 bg-slate-50" required></textarea></div>
+                        <button type="button" id="saveProfileBtn" class="py-3 px-6 bg-emerald-500 text-white font-bold rounded-xl shadow-lg hover:bg-emerald-600 transition-all">Save Profile</button>
+                    </form>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-2xl font-bold text-textMain mb-6 flex items-center gap-2"><i data-lucide="megaphone" class="text-warning w-6 h-6"></i> Scheduled Announcements</h2>
+                    <form id="addAdForm" class="space-y-4 mb-8 border border-slate-200 p-6 rounded-2xl bg-slate-50 shadow-sm relative">
+                        <div class="absolute top-0 right-0 px-3 py-1 bg-warning text-white text-xs font-bold rounded-bl-xl rounded-tr-xl">AD SCHEDULER</div>
+                        <input type="text" id="adTitle" placeholder="Announcement Title" class="w-full p-4 rounded-xl border border-slate-200 bg-white" required>
+                        <input type="url" id="adMediaUrl" placeholder="Media URL" class="w-full p-4 rounded-xl border border-slate-200 bg-white" required>
+                        <input type="url" id="adLink" placeholder="Click Link (Optional)" class="w-full p-4 rounded-xl border border-slate-200 bg-white">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="block text-sm font-bold text-slate-700 mb-1">Start Display</label><input type="datetime-local" id="adStartTime" class="w-full p-3 rounded-xl border bg-white" required></div>
+                            <div><label class="block text-sm font-bold text-slate-700 mb-1">End Display</label><input type="datetime-local" id="adEndTime" class="w-full p-3 rounded-xl border bg-white" required></div>
+                        </div>
+                        <button type="button" id="scheduleAdBtn" class="w-full py-4 bg-warning text-white font-bold rounded-xl shadow-lg hover:bg-yellow-600 transition-all mt-4">Schedule Announcement</button>
+                        <button type="button" id="cancelAdEditBtn" class="hidden w-full py-3 bg-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-300 mt-2">Cancel Edit</button>
+                    </form>
+                    <div id="adminAdList" class="space-y-4"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- EDIT QUESTION MODAL -->
+    <div id="editQuestionModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 w-full">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative custom-scrollbar">
+            <div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center z-10">
+                <h2 class="text-xl font-bold text-textMain flex items-center gap-2"><i data-lucide="edit" class="text-primary w-5 h-5"></i> Edit Scenario</h2>
+                <button type="button" onclick="document.getElementById('editQuestionModal').classList.add('hidden')" class="text-slate-400 hover:text-error transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <form id="editQuestionModalForm" class="p-6">
+                <input type="hidden" id="editQId">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                    <div><label class="block text-sm font-bold text-slate-700 mb-1">Category</label><input list="category-options" type="text" id="editQSubject" class="w-full p-2.5 rounded-lg border outline-primary bg-slate-50" required></div>
+                    <div><label class="block text-sm font-bold text-slate-700 mb-1">Section</label><input list="section-options" type="text" id="editQSection" class="w-full p-2.5 rounded-lg border outline-primary bg-slate-50" required></div>
+                    <div><label class="block text-sm font-bold text-slate-700 mb-1">Difficulty</label><select id="editQDifficulty" class="w-full p-2.5 rounded-lg border outline-primary bg-slate-50"><option value="Easy">Easy</option><option value="Medium">Medium</option><option value="Hard">Hard</option></select></div>
+                    <div><label class="block text-sm font-bold text-slate-700 mb-1">Year</label><input list="year-options" type="text" id="editQYear" class="w-full p-2.5 rounded-lg border outline-primary bg-slate-50"></div>
+                </div>
+                <div class="mb-4"><label class="block text-sm font-bold text-slate-700 mb-1">Topic Header</label><input type="text" id="editQTopic" class="w-full p-2.5 rounded-lg border bg-slate-50" required></div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Media URL (Google Drive, YouTube, Image Link)</label>
+                    <input type="url" id="editQMedia" placeholder="Paste URL here..." class="w-full p-2.5 rounded-lg border bg-slate-50">
+                </div>
+
+                <div class="mb-4"><label class="block text-sm font-bold text-slate-700 mb-1">Clinical Scenario</label><textarea id="editQScenario" rows="4" class="w-full p-3 rounded-lg border bg-slate-50" required></textarea></div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                    <input type="text" id="editOptA" placeholder="Option A" class="p-2.5 rounded-lg border bg-slate-50" required>
+                    <input type="text" id="editOptB" placeholder="Option B" class="p-2.5 rounded-lg border bg-slate-50" required>
+                    <input type="text" id="editOptC" placeholder="Option C" class="p-2.5 rounded-lg border bg-slate-50" required>
+                    <input type="text" id="editOptD" placeholder="Option D" class="p-2.5 rounded-lg border bg-slate-50" required>
+                    <input type="text" id="editOptE" placeholder="Option E (Optional)" class="sm:col-span-2 p-2.5 rounded-lg border bg-slate-50">
+                </div>
+                <div class="flex flex-col gap-4 mb-6">
+                    <div class="w-1/4">
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Correct Answer</label>
+                        <select id="editQCorrect" class="w-full p-2.5 rounded-lg border-2 border-emerald-500 font-bold bg-emerald-50">
+                            <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option>
+                        </select>
+                    </div>
+                    <div class="flex-1"><label class="block text-sm font-bold text-slate-700 mb-1">Main Explanation</label><textarea id="editQExplanation" rows="2" class="w-full p-2.5 rounded-lg border bg-slate-50" required></textarea></div>
+                    <div class="flex-1"><label class="block text-sm font-bold text-slate-700 mb-1">Why other options are incorrect (Optional)</label><textarea id="editQWrongExplanation" rows="2" placeholder="Explain why the remaining options are incorrect..." class="w-full p-2.5 rounded-lg border bg-slate-50"></textarea></div>
+                </div>
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-200">
+                    <button type="button" onclick="document.getElementById('editQuestionModal').classList.add('hidden')" class="px-5 py-2.5 bg-slate-100 text-slate-600 font-bold rounded-lg hover:bg-slate-200">Cancel</button>
+                    <button type="button" id="commitEditScenarioBtn" class="px-6 py-2.5 bg-primary text-white font-bold rounded-lg shadow hover:bg-blue-700">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="liveExamResultsModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 w-full">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative p-6 custom-scrollbar">
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <h2 class="text-xl font-bold text-textMain">Exam Scores</h2>
+                <button onclick="document.getElementById('liveExamResultsModal').classList.add('hidden')" class="text-slate-400 hover:text-error"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div id="liveExamResultsTable" class="space-y-3">
+                <p class="text-slate-500 text-center py-4">Fetching results...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(viewId, btn) {
+            document.querySelectorAll('.admin-view').forEach(el => el.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('active', 'bg-blue-600', 'text-white', 'border-blue-600'); if(b.classList.contains('w-full')) b.classList.add('text-slate-300'); });
+            btn.classList.add('active');
+            if(btn.classList.contains('w-full')) btn.classList.remove('text-slate-300'); 
+        }
+        lucide.createIcons();
+    </script>
+    <script type="module" src="js/admin.js"></script>
+</body>
+</html>
